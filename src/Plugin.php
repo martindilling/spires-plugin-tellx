@@ -1,22 +1,69 @@
 <?php
 declare(strict_types=1);
 
-namespace YourNamespace\Spires\PluginName;
+namespace AsciiSoup\Spires\TellX;
 
-use Spires\Plugins\Message\Inbound\Message;
+use Spires\Plugins\BangMessage\Inbound\BangMessage;
 use Spires\Plugins\ChannelOperations\Inbound\JoinSystemMessage;
 
 class Plugin
 {
-    public function hello(Message $message)
+    /**
+     * @var PDO
+     */
+    private $database;
+
+    function __construct(PDO $database)
     {
-        if ($message->text() === 'hello') {
-            reply('world');
-        }
+        $this->database = $database;
     }
 
-    public function welcome(JoinSystemMessage $message)
+    public function createTell(BangMessage $message)
     {
-        send_to($message->targets(), "welcome {$message->nickname()}");
+        if ($message->bangCommand() === "tell") {
+            return TellMessage::from($message);
+        }
+
+        return null;
+    }
+
+    public function saveTell(TellMessage $message)
+    {
+        $this->database->prepare("
+            INSERT INTO tells VALUES (
+                ?, ?, ?, DATETIME('now'), 0
+            )
+        ")->execute([$message->nickname(), $message->who(), $message->what()]);
+
+        reply("Will do.");
+    }
+
+    public function sendTell(JoinSystemMessage $message)
+    {
+        $statement = $this->database->prepare("
+            SELECT author, who, what, \"when\"
+            FROM tells
+            WHERE who = ?
+            AND done = 0
+        ");
+        $statement->execute([$message->nickname()]);
+
+        foreach ($statement->fetchAll() as $tell) {
+            send_to([$tell['who']], $tell['author'] . ' asked me to tell you the following on ' . $tell['when']);
+            send_to([$tell['who']], $tell['what']);
+            $this->database->prepare("
+                UPDATE tells
+                SET done = 1
+                WHERE author = ?
+                AND who = ?
+                AND what = ?
+                AND \"when\" = ?
+            ")->execute([
+                $tell['author'],
+                $tell['who'],
+                $tell['what'],
+                $tell['when']
+            ]);
+        }
     }
 }

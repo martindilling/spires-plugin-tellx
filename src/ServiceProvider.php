@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace YourNamespace\Spires\PluginName;
+namespace AsciiSoup\Spires\TellX;
 
 class ServiceProvider extends \Spires\Core\ServiceProvider
 {
@@ -20,10 +20,17 @@ class ServiceProvider extends \Spires\Core\ServiceProvider
      *
      * @return void
      */
-//    public function register()
-//    {
-//        //
-//    }
+    public function register()
+    {
+        $this->core->singleton(PDO::class, function() {
+            return new PDO(
+                "sqlite:" . __DIR__ . "/../resources/tellx.sqlite",
+                null,
+                null,
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+            );
+        });
+    }
 
     /**
      * (Optional) Boot the service provider.
@@ -31,10 +38,10 @@ class ServiceProvider extends \Spires\Core\ServiceProvider
      *
      * @return void
      */
-//    public function boot()
-//    {
-//        //
-//    }
+    public function boot()
+    {
+
+    }
 
     /**
      * Plugins provided.

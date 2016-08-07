@@ -1,14 +1,13 @@
 {
-    "name": "phpoxford/spires-plugin",
-    "description": "Starter template for a Spires plugin",
+    "name": "ascii-soup/spires-plugin-tellx",
+    "description": "Tell X a message for me!",
     "type": "library",
-    "homepage": "https://github.com/phpoxford/spires-plugin",
+    "homepage": "https://github.com/ascii-soup/spires-plugin-tellx",
     "license": "MIT",
     "authors": [
         {
-            "name": "Your Name",
-            "email": "yourname@example.com",
-            "homepage": "http://example.com"
+            "name": "Nils Luxton",
+            "email": "ascii.soup@gmail.com"
         }
     ],
     "require": {
@@ -22,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "YourNamespace\\Spires\\PluginName\\": "src/"
+            "AsciiSoup\\Spires\\TellX\\": "src/"
         }
     },
     "autoload-dev": {
@@ -30,7 +29,7 @@
         "vendor/hamcrest/hamcrest-php/hamcrest/Hamcrest.php"
       ],
         "psr-4": {
-            "YourNamespace\\Spires\\PluginName\\Tests\\": "tests/"
+          "AsciiSoup\\Spires\\TellX\\Tests\\": "test/"
         }
     },
     "scripts": {
